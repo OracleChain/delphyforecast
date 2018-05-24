@@ -78,7 +78,7 @@ struct QueryResult{
 
     uint8_t checked;
     uint64_t appealnum;
-    std::string readvalue;
+    std::string realvalue;
     std::string result;
     std::string unitrate;
 
@@ -87,7 +87,7 @@ struct QueryResult{
 
     uint64_t primary_key()const { return idquery; }
 
-    EOSLIB_SERIALIZE(QueryResult, (idquery)(checked)(appealnum)(readvalue)(result)(unitrate)(created)(updated))
+    EOSLIB_SERIALIZE(QueryResult, (idquery)(checked)(appealnum)(realvalue)(result)(unitrate)(created)(updated))
 };
 
 typedef eosio::multi_index<N(oraclequery), OracleQuery> OralceQureyContainer;
@@ -108,13 +108,13 @@ class Delphyforecast : public contract {
     void clearquery(uint64_t id);
 
     /// @abi action
-    void addqurey( OracleQuery oq );
+    void addqurey( OracleQuery par );
 
     /// @abi action
-    void addappeal(const Appeal & a);
+    void addappeal(const Appeal & par);
 
     /// @abi action
-    void addanswer(const QueryResult & queryResult);
+    void addanswer(const QueryResult & par);
 };
 
 EOSIO_ABI( Delphyforecast, (addqurey)(addappeal)(addanswer)(clearquery))

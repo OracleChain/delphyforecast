@@ -14,6 +14,8 @@ void Delphyforecast::clearquery(uint64_t id){
 }
 
 void Delphyforecast::addqurey( OracleQuery oq ) {
+    require_auth(oq.from);
+
     OralceQureyContainer oralceQureyContainer(_self, admin);
     auto ite = oralceQureyContainer.find(oq.id);
 
@@ -46,6 +48,9 @@ void Delphyforecast::addqurey( OracleQuery oq ) {
 }
 
 void Delphyforecast::addappeal(const Appeal & a){
+
+    require_auth(a.from);
+
     OralceQureyContainer oralceQureyContainer(_self, admin);
     auto iteQuery = oralceQureyContainer.find(a.idquery);
     eosio_assert(iteQuery != oralceQureyContainer.end(), QUERY_EXPIRED);
@@ -72,20 +77,22 @@ void Delphyforecast::addappeal(const Appeal & a){
 
 void Delphyforecast::addanswer(const QueryResult & queryResult){
 
+    require_auth(admin);
+
     OralceQureyContainer oralceQureyContainer(_self, admin);
     auto iteQuery = oralceQureyContainer.find(queryResult.idquery);
     eosio_assert(iteQuery!= oralceQureyContainer.end(), QUERY_NOT_EXISTS);
-    eosio_assert(iteQuery->enddate>now(), TIME_NOT_REACHED);
+    eosio_assert(iteQuery->enddate<=now(), TIME_NOT_REACHED);
 
     QueryResultContainer queryResultContainer(_self, admin);
     auto ite = queryResultContainer.find(queryResult.idquery);
 
-    if(ite != queryResultContainer.end()){
+    if(ite == queryResultContainer.end()){
         queryResultContainer.emplace(admin, [&](auto&s){
             s.idquery  = queryResult.idquery;
             s.checked  = queryResult.checked;
             s.appealnum  = queryResult.appealnum;
-            s.readvalue  = queryResult.readvalue;
+            s.realvalue  = queryResult.realvalue;
             s.result  = queryResult.result;
             s.unitrate  = queryResult.unitrate;
             s.created  = queryResult.created;
@@ -96,7 +103,7 @@ void Delphyforecast::addanswer(const QueryResult & queryResult){
               s.idquery  = queryResult.idquery;
               s.checked  = queryResult.checked;
               s.appealnum  = queryResult.appealnum;
-              s.readvalue  = queryResult.readvalue;
+              s.realvalue  = queryResult.realvalue;
               s.result  = queryResult.result;
               s.unitrate  = queryResult.unitrate;
               s.created  = queryResult.created;
